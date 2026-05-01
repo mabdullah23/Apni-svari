@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Apni_svari</string>
     <string name="default_web_client_id">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+    <string name="home_tab">Home</string>
+    <string name="search_tab">Search</string>
+    <string name="favourite_tab">Favourite</string>
+    <string name="profile_tab">Profile</string>
+    <string name="sell_tab">Sell</string>
+    <string name="home_fragment_text">This is HomeFragment</string>
+    <string name="search_fragment_text">This is SearchFragment</string>
+    <string name="favourite_fragment_text">This is FavouriteFragment</string>
+    <string name="profile_fragment_text">This is ProfileFragment</string>
+    <string name="sell_fragment_text">This is SellFragment</string>
+    <string name="hello_user">Hello, User</string>
+    <string name="hello_user_with_name">Hello, %1$s</string>
 </resources>

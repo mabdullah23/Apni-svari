@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainUserPage extends AppCompatActivity {
 
@@ -20,13 +23,70 @@ public class MainUserPage extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Display current user name if available
+
         android.widget.TextView nameView = findViewById(R.id.userNameText);
         com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null && user.getDisplayName() != null) {
-            nameView.setText("Hello, " + user.getDisplayName());
+        if (user != null && user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {
+            nameView.setText(getString(R.string.hello_user_with_name, user.getDisplayName()));
         } else if (user != null && user.getEmail() != null) {
-            nameView.setText("Hello, " + user.getEmail());
+            nameView.setText(getString(R.string.hello_user_with_name, user.getEmail()));
+        }
+
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+        UserPagerAdapter adapter = new UserPagerAdapter(this);
+        viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(5);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                viewPager.setCurrentItem(0, true);
+                return true;
+            } else if (id == R.id.nav_search) {
+                viewPager.setCurrentItem(1, true);
+                return true;
+            } else if (id == R.id.nav_favourite) {
+                viewPager.setCurrentItem(2, true);
+                return true;
+            } else if (id == R.id.nav_profile) {
+                viewPager.setCurrentItem(3, true);
+                return true;
+            } else if (id == R.id.nav_sell) {
+                viewPager.setCurrentItem(4, true);
+                return true;
+            }
+            return false;
+        });
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                switch (position) {
+                    case 0:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+                        break;
+                    case 1:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_search);
+                        break;
+                    case 2:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_favourite);
+                        break;
+                    case 3:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
+                        break;
+                    case 4:
+                    default:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_sell);
+                        break;
+                }
+            }
+        });
+
+        if (savedInstanceState == null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
         }
     }
 }
