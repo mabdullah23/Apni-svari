@@ -19,6 +19,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Locale;
+
 public class SigninFragment extends Fragment {
 
     private FirebaseAuth auth;
@@ -26,7 +29,10 @@ public class SigninFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_signin, container, false);
 
         auth = FirebaseAuth.getInstance();
@@ -35,70 +41,95 @@ public class SigninFragment extends Fragment {
         EditText username = view.findViewById(R.id.signinUsername);
         EditText email = view.findViewById(R.id.signinEmail);
         EditText password = view.findViewById(R.id.signinPassword);
+        EditText phone = view.findViewById(R.id.signinPhone); // NEW FIELD
         Button signupBtn = view.findViewById(R.id.signinButton);
 
         signupBtn.setOnClickListener(v -> {
+
             String u = username.getText().toString().trim();
-            String e = email.getText().toString().trim();
+            String e = email.getText().toString().trim().toLowerCase(Locale.ROOT);
             String p = password.getText().toString().trim();
-            if (u.isEmpty() || e.isEmpty() || p.isEmpty()) {
+            String ph = phone.getText().toString().trim();
+
+            // VALIDATION
+            if (u.isEmpty() || e.isEmpty() || p.isEmpty() || ph.isEmpty()) {
                 Toast.makeText(getContext(), "Enter all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             if (!Patterns.EMAIL_ADDRESS.matcher(e).matches()) {
                 email.setError("Enter a valid email");
                 return;
             }
+
             if (p.length() < 6) {
-                password.setError("Password should be at least 6 characters");
+                password.setError("Password must be at least 6 characters");
                 return;
             }
 
+            // Simple phone validation (Pakistan-style or general)
+            if (!ph.matches("^[0-9]{10,13}$")) {
+                phone.setError("Enter a valid phone number (10–13 digits)");
+                return;
+            }
+
+            // CREATE USER
             auth.createUserWithEmailAndPassword(e, p)
                     .addOnCompleteListener(task -> {
+
                         if (task.isSuccessful()) {
+
                             FirebaseUser user = auth.getCurrentUser();
-                            if (user != null) {
-                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(u)
-                                        .build();
-                                user.updateProfile(profileUpdates).addOnCompleteListener(t -> {
-                                    if (t.isSuccessful()) {
-                                        // Save user profile to Firestore
-                                        db.collection("users").document(user.getUid())
-                                                .set(new java.util.HashMap<String, Object>() {{
-                                                    put("username", u);
-                                                    put("email", user.getEmail());
-                                                    put("uid", user.getUid());
-                                                    put("createdAt", com.google.firebase.Timestamp.now());
-                                                }})
-                                                .addOnCompleteListener(t2 -> {
-                                                    if (t2.isSuccessful()) {
-                                                        // Also save username to usernames collection for duplicate checking
-                                                        db.collection("usernames").document(u)
-                                                                .set(new java.util.HashMap<String, Object>() {{
-                                                                    put("uid", user.getUid());
-                                                                    put("email", user.getEmail());
-                                                                    put("timestamp", com.google.firebase.Timestamp.now());
-                                                                }})
-                                                                .addOnCompleteListener(t3 -> {
-                                                                    // Navigate to MainUserPage
-                                                                                    startActivity(new Intent(getContext(), Ask_user.class));
-                                                                    if (getActivity() != null) getActivity().finish();
-                                                                });
-                                                    } else {
-                                                        Toast.makeText(getContext(), "Error saving profile", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                    } else {
-                                        Toast.makeText(getContext(), "Error updating display name", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                            if (user == null) return;
+
+                            // 1. Set display name
+                            user.updateProfile(
+                                    new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(u)
+                                            .build()
+                            );
+
+                            // 2. Navigate immediately
+                            startActivity(new Intent(getContext(), Ask_user.class));
+                            if (getActivity() != null) {
+                                getActivity().finish();
                             }
+
+                            Toast.makeText(getContext(),
+                                    "Account created successfully!",
+                                    Toast.LENGTH_SHORT).show();
+
+                            // 3. Save Firestore in background
+                            HashMap<String, Object> userData = new HashMap<>();
+                            userData.put("username", u);
+                            userData.put("email", user.getEmail());
+                            userData.put("phone", ph); // ✅ ADDED
+                            userData.put("uid", user.getUid());
+                            userData.put("createdAt", com.google.firebase.Timestamp.now());
+
+                            db.collection("users")
+                                    .document(user.getUid())
+                                    .set(userData);
+
+                            // Optional usernames collection
+                            HashMap<String, Object> usernameData = new HashMap<>();
+                            usernameData.put("uid", user.getUid());
+                            usernameData.put("email", user.getEmail());
+                            usernameData.put("phone", ph); // ✅ ADDED
+                            usernameData.put("timestamp", com.google.firebase.Timestamp.now());
+
+                            db.collection("usernames")
+                                    .document(u)
+                                    .set(usernameData);
+
                         } else {
+
                             Exception ex = task.getException();
-                            String errorMsg = ex != null ? ex.getMessage() : "Unknown error";
-                            Toast.makeText(getContext(), "Signup failed: " + errorMsg, Toast.LENGTH_LONG).show();
+
+                            Toast.makeText(getContext(),
+                                    "Signup failed: " +
+                                            (ex != null ? ex.getMessage() : "Unknown error"),
+                                    Toast.LENGTH_LONG).show();
                         }
                     });
         });
@@ -106,4 +137,3 @@ public class SigninFragment extends Fragment {
         return view;
     }
 }
-

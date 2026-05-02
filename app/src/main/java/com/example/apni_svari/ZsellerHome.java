@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -102,6 +103,13 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
                 return;
             }
 
+            try {
+                Double.parseDouble(price);
+            } catch (NumberFormatException ex) {
+                priceInput.setError("Enter a valid number");
+                return;
+            }
+
             saveProduct(name, model, price, selectedImageBase64);
             dialog.dismiss();
         }));
@@ -114,21 +122,22 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
             return;
         }
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("ownerUid", currentUser.getUid());
-        data.put("carName", name);
-        data.put("model", model);
-        data.put("price", price);
-        data.put("offeredPrice", "");
-        data.put("imageBase64", imageBase64);
-        data.put("createdAt", com.google.firebase.Timestamp.now());
+        String documentId = db.collection("cars").document().getId();
 
-        db.collection("seller_products")
-                .add(data)
-                .addOnSuccessListener(doc -> {
-                    // Real-time listener will handle updating the UI
-                    Toast.makeText(getContext(), R.string.seller_product_added, Toast.LENGTH_SHORT).show();
-                })
+        Map<String, Object> carData = new HashMap<>();
+        carData.put("ownerId", currentUser.getUid());
+        carData.put("ownerName", resolveOwnerName());
+        carData.put("ownerPhone", resolveOwnerPhone());
+        carData.put("name", name);
+        carData.put("carName", name);
+        carData.put("model", model);
+        carData.put("price", Double.parseDouble(price));
+        carData.put("imageBase64", imageBase64);
+        carData.put("createdAt", com.google.firebase.Timestamp.now());
+
+        db.collection("cars").document(documentId)
+                .set(carData)
+                .addOnSuccessListener(unused -> Toast.makeText(getContext(), R.string.seller_product_added, Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
@@ -143,8 +152,8 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
         }
 
         // Set up real-time listener
-        productsListener = db.collection("seller_products")
-                .whereEqualTo("ownerUid", currentUser.getUid())
+        productsListener = db.collection("cars")
+                .whereEqualTo("ownerId", currentUser.getUid())
                 .addSnapshotListener((querySnapshots, error) -> {
                     if (error != null) {
                         return;
@@ -156,10 +165,10 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
                             productList.add(new ZsellerProduct(
                                     doc.getId(),
                                     doc.getString("imageBase64"),
-                                    doc.getString("carName"),
+                                    firstNonEmpty(doc.getString("carName"), doc.getString("name")),
                                     doc.getString("model"),
-                                    doc.getString("price"),
-                                    doc.getString("offeredPrice")
+                                    String.valueOf(doc.get("price")),
+                                    ""
                             ));
                         }
                         adapter.notifyDataSetChanged();
@@ -216,9 +225,9 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
                 .setTitle(R.string.seller_delete_product)
                 .setMessage("Are you sure you want to delete this product?")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    db.collection("seller_products")
-                            .document(product.getId())
-                            .delete()
+                    WriteBatch batch = db.batch();
+                    batch.delete(db.collection("cars").document(product.getId()));
+                    batch.commit()
                             .addOnSuccessListener(unused -> {
                                 if (position >= 0 && position < productList.size()) {
                                     productList.remove(position);
@@ -230,6 +239,24 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
+    }
+
+    private String resolveOwnerName() {
+        if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().trim().isEmpty()) {
+            return currentUser.getDisplayName();
+        }
+        if (currentUser.getEmail() != null && !currentUser.getEmail().trim().isEmpty()) {
+            return currentUser.getEmail();
+        }
+        return currentUser.getUid();
+    }
+
+    private String resolveOwnerPhone() {
+        return currentUser.getPhoneNumber() == null ? "" : currentUser.getPhoneNumber();
+    }
+
+    private String firstNonEmpty(String primary, String fallback) {
+        return (primary != null && !primary.trim().isEmpty()) ? primary : fallback;
     }
 }
 

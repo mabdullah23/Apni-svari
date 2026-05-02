@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/carDetailBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/backarrow"
+            android:contentDescription="Back" />
+
+        <ImageView
+            android:id="@+id/carDetailImage"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/carimg"
+            android:contentDescription="Car image" />
+
+        <TextView
+            android:id="@+id/carDetailOwner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Owner"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/carDetailPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Price"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/carDetailModel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Model"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/proposedPriceInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Proposed price"
+            android:inputType="numberDecimal" />
+
+        <Button
+            android:id="@+id/sendProposalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Send Proposal" />
+
+    </LinearLayout>
+</ScrollView>
+

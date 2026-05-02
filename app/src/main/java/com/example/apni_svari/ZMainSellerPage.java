@@ -47,7 +47,7 @@ public class ZMainSellerPage extends AppCompatActivity {
             } else if (id == R.id.nav_seller_get_price) {
                 fragment = new ZsellerGetPrice();
             } else if (id == R.id.nav_seller_message) {
-                fragment = new ZsellerMessage();
+                fragment = new ProposalsFragment();
             }
 
             if (fragment != null) {

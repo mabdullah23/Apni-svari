@@ -1,6 +1,7 @@
 package com.example.apni_svari;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,15 +14,24 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainUserPage extends AppCompatActivity {
 
+    private View buyerDetailContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_user_page);
+        buyerDetailContainer = findViewById(R.id.buyerDetailContainer);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0 && buyerDetailContainer != null) {
+                buyerDetailContainer.setVisibility(View.GONE);
+            }
         });
 
         android.widget.TextView nameView = findViewById(R.id.userNameText);
@@ -88,5 +98,15 @@ public class MainUserPage extends AppCompatActivity {
         if (savedInstanceState == null) {
             bottomNavigationView.setSelectedItemId(R.id.nav_home);
         }
+    }
+
+    public void openBuyerDetailFragment(androidx.fragment.app.Fragment fragment) {
+        if (buyerDetailContainer != null) {
+            buyerDetailContainer.setVisibility(View.VISIBLE);
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.buyerDetailContainer, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
