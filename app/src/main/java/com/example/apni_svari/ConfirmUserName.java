@@ -85,7 +85,7 @@ public class ConfirmUserName extends AppCompatActivity {
                                         .addOnCompleteListener(t2 -> {
                                             if (t2.isSuccessful()) {
                                                 // Navigate to MainUserPage
-                                                startActivity(new Intent(ConfirmUserName.this, MainUserPage.class));
+                                                        startActivity(new Intent(ConfirmUserName.this, Ask_user.class));
                                                 finish();
                                             } else {
                                                 Toast.makeText(ConfirmUserName.this, "Error saving profile", Toast.LENGTH_SHORT).show();

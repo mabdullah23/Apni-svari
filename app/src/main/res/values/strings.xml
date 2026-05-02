@@ -22,4 +22,26 @@
     <string name="profile_username_value">Username: %1$s</string>
     <string name="profile_email_value">Email: %1$s</string>
     <string name="profile_empty_value">-</string>
+    <string name="drawer_open">Open Navigation Drawer</string>
+    <string name="drawer_close">Close Navigation Drawer</string>
+    <string name="seller_open_drawer">Open Drawer</string>
+    <string name="seller_home_title">Seller Home</string>
+    <string name="seller_add_product">Add Product</string>
+    <string name="seller_delete_product">Delete Product</string>
+    <string name="seller_select_picture">Select Picture</string>
+    <string name="seller_car_name_hint">Car Name</string>
+    <string name="seller_car_model_hint">Model</string>
+    <string name="seller_car_price_hint">Price</string>
+    <string name="seller_product_detail">Product Detail</string>
+    <string name="seller_back">Back</string>
+    <string name="seller_model_value">Model: %1$s</string>
+    <string name="seller_price_value">Price: %1$s</string>
+    <string name="seller_offered_price_value">Offered Price: %1$s</string>
+    <string name="seller_no_offer">No offer yet</string>
+    <string name="seller_add_product_dialog_title">Add Car Product</string>
+    <string name="seller_save">Save</string>
+    <string name="seller_cancel">Cancel</string>
+    <string name="seller_product_added">Product added</string>
+    <string name="seller_product_deleted">Product deleted</string>
+    <string name="seller_fill_all_fields">Please fill all fields and select image</string>
 </resources>

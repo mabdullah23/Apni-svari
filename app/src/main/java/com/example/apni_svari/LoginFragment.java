@@ -27,12 +27,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginFragment extends Fragment {
 
     private FirebaseAuth auth;
-    private FirebaseFirestore db;
     private GoogleSignInClient mGoogleSignInClient;
     private ActivityResultLauncher<Intent> googleSignInLauncher;
 
@@ -94,8 +92,8 @@ public class LoginFragment extends Fragment {
             auth.signInWithEmailAndPassword(e, p)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Proceed to MainUserPage
-                            startActivity(new Intent(getContext(), MainUserPage.class));
+                            // Proceed to Ask_user (buyer/seller choice)
+                            startActivity(new Intent(getContext(), Ask_user.class));
                             if (getActivity() != null) getActivity().finish();
                         } else {
                             Toast.makeText(getContext(), "Login failed: " + (task.getException() != null ? task.getException().getMessage() : "Unknown error"), Toast.LENGTH_LONG).show();
@@ -134,7 +132,7 @@ public class LoginFragment extends Fragment {
                     if (auth.getCurrentUser() != null && auth.getCurrentUser().getDisplayName() != null && !auth.getCurrentUser().getDisplayName().isEmpty()) {
                         // Has displayName = returning user
                         Toast.makeText(getContext(), "Welcome back!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getContext(), MainUserPage.class));
+                        startActivity(new Intent(getContext(), Ask_user.class));
                         if (getActivity() != null) getActivity().finish();
                     } else {
                         // No displayName = first time user

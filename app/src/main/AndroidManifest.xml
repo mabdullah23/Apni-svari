@@ -29,6 +29,12 @@
             android:name=".ConfirmUserName"
             android:exported="false" />
         <activity
+            android:name=".Ask_user"
+            android:exported="false" />
+        <activity
+            android:name=".ZMainSellerPage"
+            android:exported="false" />
+        <activity
             android:name=".MainUserPage"
             android:exported="false" />
         <activity

@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     
     // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:34.12.0"))

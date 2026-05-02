@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_seller_home"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_seller_history"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="History" />
+    <item
+        android:id="@+id/nav_seller_get_price"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Get Price" />
+    <item
+        android:id="@+id/nav_seller_message"
+        android:icon="@android:drawable/ic_menu_send"
+        android:title="Messages" />
+</menu>
+

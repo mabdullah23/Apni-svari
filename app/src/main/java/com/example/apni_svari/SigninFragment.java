@@ -83,7 +83,7 @@ public class SigninFragment extends Fragment {
                                                                 }})
                                                                 .addOnCompleteListener(t3 -> {
                                                                     // Navigate to MainUserPage
-                                                                    startActivity(new Intent(getContext(), MainUserPage.class));
+                                                                                    startActivity(new Intent(getContext(), Ask_user.class));
                                                                     if (getActivity() != null) getActivity().finish();
                                                                 });
                                                     } else {
