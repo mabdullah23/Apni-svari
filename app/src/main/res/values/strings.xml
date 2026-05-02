@@ -13,4 +13,13 @@
     <string name="sell_fragment_text">This is SellFragment</string>
     <string name="hello_user">Hello, User</string>
     <string name="hello_user_with_name">Hello, %1$s</string>
+    <string name="profile_username_label">Username</string>
+    <string name="profile_email_label">Email</string>
+    <string name="profile_pick_image">Change Profile Picture</string>
+    <string name="profile_remove_image">Remove Profile Picture</string>
+    <string name="profile_logout">Logout</string>
+    <string name="profile_picture_content_description">Profile Picture</string>
+    <string name="profile_username_value">Username: %1$s</string>
+    <string name="profile_email_value">Email: %1$s</string>
+    <string name="profile_empty_value">-</string>
 </resources>
