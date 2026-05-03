@@ -25,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 
 public class ZsellerGetPrice extends Fragment {
 
+    private static final String MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+
     private EditText name, model, condition, price;
     private TextView result;
 
@@ -57,7 +59,13 @@ public class ZsellerGetPrice extends Fragment {
         new Thread(() -> {
             HttpURLConnection conn = null;
             try {
-                URL url = new URL(MODEL_URL + "?key=" + API_KEY);
+                String apiKey = BuildConfig.GEMINI_API_KEY;
+                if (apiKey == null || apiKey.trim().isEmpty()) {
+                    postResult("Error: Gemini API key is not configured.");
+                    return;
+                }
+
+                URL url = new URL(MODEL_URL + "?key=" + apiKey);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
