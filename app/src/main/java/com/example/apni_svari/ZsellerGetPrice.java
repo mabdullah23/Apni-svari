@@ -25,6 +25,11 @@ import java.nio.charset.StandardCharsets;
 
 public class ZsellerGetPrice extends Fragment {
 
+    // Gemini generateContent endpoint for text-only prompt requests.
+    private static final String MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+    // Replace with your real key (or move to BuildConfig/local.properties for production).
+    private static final String API_KEY = "YOUR_API_KEY";
+
     private EditText name, model, condition, price;
     private TextView result;
 
@@ -57,6 +62,7 @@ public class ZsellerGetPrice extends Fragment {
         new Thread(() -> {
             HttpURLConnection conn = null;
             try {
+
                 URL url = new URL(MODEL_URL + "?key=" + API_KEY);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
