@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 public class ZsellerGetPrice extends Fragment {
 
     // Gemini generateContent endpoint for text-only prompt requests.
-    private static final String MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+    private static final String MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
     private EditText name, model, condition, price;
     private TextView result;
