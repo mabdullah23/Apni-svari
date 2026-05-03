@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 
 import com.example.apni_svari.models.Car;
+import com.example.apni_svari.models.HistoryCar;
 import com.example.apni_svari.models.Proposal;
 import com.example.apni_svari.models.User;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,6 +30,10 @@ public class FirestoreRepository {
 
     public interface ProposalsCallback {
         void onLoaded(List<Proposal> proposals);
+    }
+
+    public interface HistoryCarsCallback {
+        void onLoaded(List<HistoryCar> historyCars);
     }
 
     public interface UserCallback {
@@ -96,6 +101,50 @@ public class FirestoreRepository {
                 .addOnFailureListener(e -> callback.onLoaded(new ArrayList<>()));
     }
 
+    public void fetchHistoryCarsForBuyer(String buyerId, HistoryCarsCallback callback) {
+        if (TextUtils.isEmpty(buyerId)) {
+            callback.onLoaded(new ArrayList<>());
+            return;
+        }
+
+        db.collection("historycars")
+                .whereEqualTo("buyerId", buyerId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<HistoryCar> historyCars = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        HistoryCar historyCar = mapHistoryCar(doc);
+                        if (historyCar != null) {
+                            historyCars.add(historyCar);
+                        }
+                    }
+                    callback.onLoaded(historyCars);
+                })
+                .addOnFailureListener(e -> callback.onLoaded(new ArrayList<>()));
+    }
+
+    public void fetchHistoryCarsForSeller(String ownerId, HistoryCarsCallback callback) {
+        if (TextUtils.isEmpty(ownerId)) {
+            callback.onLoaded(new ArrayList<>());
+            return;
+        }
+
+        db.collection("historycars")
+                .whereEqualTo("ownerId", ownerId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<HistoryCar> historyCars = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        HistoryCar historyCar = mapHistoryCar(doc);
+                        if (historyCar != null) {
+                            historyCars.add(historyCar);
+                        }
+                    }
+                    callback.onLoaded(historyCars);
+                })
+                .addOnFailureListener(e -> callback.onLoaded(new ArrayList<>()));
+    }
+
     public void createProposal(Proposal proposal, OperationCallback callback) {
         Map<String, Object> data = new HashMap<>();
         data.put("carId", proposal.getCarId());
@@ -136,20 +185,29 @@ public class FirestoreRepository {
         db.collection("proposals")
                 .whereEqualTo("carId", proposal.getCarId())
                 .get()
-                .addOnSuccessListener(snapshot -> {
-                    WriteBatch batch = db.batch();
-                    for (QueryDocumentSnapshot doc : snapshot) {
-                        batch.delete(db.collection("proposals").document(doc.getId()));
-                    }
-                    batch.delete(db.collection("cars").document(proposal.getCarId()));
+                .addOnSuccessListener(snapshot -> db.collection("cars").document(proposal.getCarId()).get()
+                        .addOnSuccessListener(carSnapshot -> {
+                            if (!carSnapshot.exists()) {
+                                callback.onComplete(false, "Car not found");
+                                return;
+                            }
 
-                    batch.commit()
-                            .addOnSuccessListener(unused -> {
-                                addMessageAndNotifyBuyer(proposal, "accepted");
-                                callback.onComplete(true, null);
-                            })
-                            .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
-                })
+                            Car car = mapCar(carSnapshot);
+                            WriteBatch batch = db.batch();
+                            for (QueryDocumentSnapshot doc : snapshot) {
+                                batch.delete(db.collection("proposals").document(doc.getId()));
+                            }
+                            batch.delete(db.collection("cars").document(proposal.getCarId()));
+                            batch.set(db.collection("historycars").document(), buildHistoryCarData(car, proposal));
+
+                            batch.commit()
+                                    .addOnSuccessListener(unused -> {
+                                        addMessageAndNotifyBuyer(proposal, "accepted");
+                                        callback.onComplete(true, null);
+                                    })
+                                    .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
+                        })
+                        .addOnFailureListener(e -> callback.onComplete(false, e.getMessage())))
                 .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
     }
 
@@ -187,6 +245,25 @@ public class FirestoreRepository {
                 })
                 .addOnFailureListener(e -> {
                 });
+    }
+
+    private Map<String, Object> buildHistoryCarData(Car car, Proposal proposal) {
+        Map<String, Object> history = new HashMap<>();
+        history.put("carId", car.getId());
+        history.put("buyerId", proposal.getBuyerId());
+        history.put("buyerName", proposal.getBuyerName());
+        history.put("ownerId", car.getOwnerId());
+        history.put("ownerName", car.getOwnerName());
+        history.put("ownerPhone", car.getOwnerPhone());
+        history.put("carName", car.getName());
+        history.put("name", car.getName());
+        history.put("model", car.getModel());
+        history.put("price", car.getPrice());
+        history.put("acceptedPrice", proposal.getProposedPrice());
+        history.put("imageBase64", car.getImageBase64());
+        history.put("imageUrl", car.getImageUrl());
+        history.put("acceptedAt", System.currentTimeMillis());
+        return history;
     }
 
     private void sendSmsToBuyer(Proposal proposal, String finalStatus) {
@@ -283,6 +360,41 @@ public class FirestoreRepository {
             }
         }
         return car;
+    }
+
+    private HistoryCar mapHistoryCar(DocumentSnapshot doc) {
+        HistoryCar historyCar = doc.toObject(HistoryCar.class);
+        if (historyCar == null) {
+            historyCar = new HistoryCar();
+        }
+        historyCar.setId(doc.getId());
+        if (TextUtils.isEmpty(historyCar.getCarId())) historyCar.setCarId(doc.getString("carId"));
+        if (TextUtils.isEmpty(historyCar.getBuyerId())) historyCar.setBuyerId(doc.getString("buyerId"));
+        if (TextUtils.isEmpty(historyCar.getBuyerName())) historyCar.setBuyerName(doc.getString("buyerName"));
+        if (TextUtils.isEmpty(historyCar.getOwnerId())) historyCar.setOwnerId(doc.getString("ownerId"));
+        if (TextUtils.isEmpty(historyCar.getOwnerName())) historyCar.setOwnerName(doc.getString("ownerName"));
+        if (TextUtils.isEmpty(historyCar.getOwnerPhone())) historyCar.setOwnerPhone(doc.getString("ownerPhone"));
+        if (TextUtils.isEmpty(historyCar.getCarName())) historyCar.setCarName(firstNonEmpty(doc.getString("carName"), doc.getString("name")));
+        if (TextUtils.isEmpty(historyCar.getModel())) historyCar.setModel(doc.getString("model"));
+        if (historyCar.getPrice() == 0d) {
+            Object priceValue = doc.get("price");
+            if (priceValue instanceof Number) {
+                historyCar.setPrice(((Number) priceValue).doubleValue());
+            }
+        }
+        if (historyCar.getAcceptedPrice() == 0d) {
+            Object acceptedPrice = doc.get("acceptedPrice");
+            if (acceptedPrice instanceof Number) {
+                historyCar.setAcceptedPrice(((Number) acceptedPrice).doubleValue());
+            }
+        }
+        if (TextUtils.isEmpty(historyCar.getImageBase64())) historyCar.setImageBase64(doc.getString("imageBase64"));
+        if (TextUtils.isEmpty(historyCar.getImageUrl())) historyCar.setImageUrl(doc.getString("imageUrl"));
+        Object acceptedAt = doc.get("acceptedAt");
+        if (acceptedAt instanceof Number) {
+            historyCar.setAcceptedAt(((Number) acceptedAt).longValue());
+        }
+        return historyCar;
     }
 
     private String firstNonEmpty(String primary, String fallback) {

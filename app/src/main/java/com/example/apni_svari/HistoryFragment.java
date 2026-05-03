@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZsellerHistory extends Fragment {
+public class HistoryFragment extends Fragment {
 
     private final List<HistoryCar> historyCars = new ArrayList<>();
     private final FirestoreRepository repository = new FirestoreRepository();
@@ -45,11 +44,11 @@ public class ZsellerHistory extends Fragment {
     }
 
     private void loadHistory() {
-        String ownerId = FirebaseAuth.getInstance().getCurrentUser() == null
+        String buyerId = FirebaseAuth.getInstance().getCurrentUser() == null
                 ? null
                 : FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        repository.fetchHistoryCarsForSeller(ownerId, loaded -> {
+        repository.fetchHistoryCarsForBuyer(buyerId, loaded -> {
             historyCars.clear();
             historyCars.addAll(loaded);
             if (adapter != null) {

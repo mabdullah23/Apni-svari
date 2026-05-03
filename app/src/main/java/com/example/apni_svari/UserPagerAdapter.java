@@ -20,17 +20,16 @@ public class UserPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new SearchFragment();
             case 2:
-                return new FavouriteFragment();
+                return new HistoryFragment();
             case 3:
                 return new ProfileFragment();
-            case 4:
             default:
-                return new SellFragment();
+                return new HomeFragment();
         }
     }
 
     @Override
     public int getItemCount() {
-        return 5;
+        return 4;
     }
 }
