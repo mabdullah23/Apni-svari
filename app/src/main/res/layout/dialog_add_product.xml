@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -24,27 +25,45 @@
             android:layout_marginTop="10dp"
             android:text="@string/seller_select_picture" />
 
-        <EditText
-            android:id="@+id/carNameInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/carNameInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/seller_car_name_hint" />
+            android:layout_marginTop="10dp">
 
-        <EditText
-            android:id="@+id/carModelInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/seller_car_model_hint" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/carNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/seller_car_name_hint" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/carPriceInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/carModelInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/seller_car_price_hint"
-            android:inputType="numberDecimal" />
+            android:layout_marginTop="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/carModelInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/seller_car_model_hint" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/carPriceInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/carPriceInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/seller_car_price_hint"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 </ScrollView>

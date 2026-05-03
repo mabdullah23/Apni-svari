@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,29 +17,47 @@
         android:textStyle="bold"
         android:layout_marginBottom="16dp" />
 
-    <EditText
-        android:id="@+id/searchCarName"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchCarNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Car Name (required)"
-        android:inputType="text"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="12dp">
 
-    <EditText
-        android:id="@+id/searchCarModel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Model (required)"
-        android:inputType="text"
-        android:layout_marginBottom="12dp" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchCarName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Car Name (required)"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/searchCarPrice"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchCarModelLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Price (required)"
-        android:inputType="numberDecimal"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="12dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchCarModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Model (required)"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchCarPriceLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchCarPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Price (required)"
+            android:inputType="numberDecimal" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/searchButton"
@@ -55,4 +74,3 @@
         tools:listitem="@layout/item_car" />
 
 </LinearLayout>
-

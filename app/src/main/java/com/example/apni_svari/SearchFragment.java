@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.apni_svari.adapters.CarsAdapter;
 import com.example.apni_svari.data.FirestoreRepository;
 import com.example.apni_svari.models.Car;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SearchFragment extends Fragment {
 
-    private EditText searchCarName, searchCarModel, searchCarPrice;
+    private TextInputEditText searchCarName, searchCarModel, searchCarPrice;
     private Button searchButton;
     private RecyclerView searchResultsRecycler;
     private final List<Car> searchResults = new ArrayList<>();
@@ -36,14 +36,12 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        // Initialize views
         searchCarName = view.findViewById(R.id.searchCarName);
         searchCarModel = view.findViewById(R.id.searchCarModel);
         searchCarPrice = view.findViewById(R.id.searchCarPrice);
         searchButton = view.findViewById(R.id.searchButton);
         searchResultsRecycler = view.findViewById(R.id.searchResultsRecycler);
 
-        // Setup RecyclerView
         searchResultsRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new CarsAdapter(searchResults, car -> {
             if (getActivity() instanceof MainUserPage) {
@@ -52,7 +50,6 @@ public class SearchFragment extends Fragment {
         });
         searchResultsRecycler.setAdapter(adapter);
 
-        // Setup search button click listener
         searchButton.setOnClickListener(v -> performSearch());
 
         return view;
@@ -63,7 +60,6 @@ public class SearchFragment extends Fragment {
         String model = searchCarModel.getText().toString().trim();
         String priceStr = searchCarPrice.getText().toString().trim();
 
-        // Validate all fields are filled
         if (name.isEmpty()) {
             Toast.makeText(requireContext(), "Please enter car name", Toast.LENGTH_SHORT).show();
             return;
@@ -91,7 +87,6 @@ public class SearchFragment extends Fragment {
                 ? null
                 : FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // Perform search with filtering
         repository.searchCars(name, model, price, currentUserId, loadedCars -> {
             searchResults.clear();
             searchResults.addAll(loadedCars);

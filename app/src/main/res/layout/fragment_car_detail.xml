@@ -51,13 +51,19 @@
             android:text="Model"
             android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/proposedPriceInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/proposedPriceInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Proposed price"
-            android:inputType="numberDecimal" />
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/proposedPriceInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Proposed price"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +24,7 @@ import com.example.apni_svari.data.FirestoreRepository;
 import com.example.apni_svari.models.Car;
 import com.example.apni_svari.models.Proposal;
 import com.example.apni_svari.models.User;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,7 +42,7 @@ public class CarDetailFragment extends Fragment {
     private TextView priceText;
     private TextView ownerText;
     private TextView modelText;
-    private EditText proposedPriceInput;
+    private TextInputEditText proposedPriceInput;
     private Button sendProposalBtn;
     private ImageButton callOwnerBtn;
     
@@ -86,7 +86,6 @@ public class CarDetailFragment extends Fragment {
         callOwnerBtn.setOnClickListener(v -> {
             if (currentCar != null && !TextUtils.isEmpty(currentCar.getOwnerPhone())) {
                 String phone = currentCar.getOwnerPhone().trim();
-                // Basic cleanup
                 if (phone.equalsIgnoreCase("null") || phone.isEmpty()) {
                     Toast.makeText(requireContext(), "Phone number not available", Toast.LENGTH_SHORT).show();
                     return;
@@ -124,7 +123,6 @@ public class CarDetailFragment extends Fragment {
 
                     currentCar = repository.mapCar(snapshot);
                     
-                    // Fallback for extra images
                     if (currentCar.getExtraImages().isEmpty()) {
                         List<String> extras = (List<String>) snapshot.get("extraImages");
                         if (extras != null) {
@@ -132,7 +130,6 @@ public class CarDetailFragment extends Fragment {
                         }
                     }
 
-                    // FORCE FETCH OWNER PROFILE if name or phone is missing
                     if (!TextUtils.isEmpty(currentCar.getOwnerId())) {
                         repository.fetchUserById(currentCar.getOwnerId(), user -> {
                             if (user != null) {

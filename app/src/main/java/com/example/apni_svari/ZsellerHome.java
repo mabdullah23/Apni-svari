@@ -9,7 +9,6 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -21,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -91,9 +91,9 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
     private void showAddProductDialog() {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_product, null);
         dialogImagePreview = dialogView.findViewById(R.id.dialogProductImage);
-        EditText nameInput = dialogView.findViewById(R.id.carNameInput);
-        EditText modelInput = dialogView.findViewById(R.id.carModelInput);
-        EditText priceInput = dialogView.findViewById(R.id.carPriceInput);
+        TextInputEditText nameInput = dialogView.findViewById(R.id.carNameInput);
+        TextInputEditText modelInput = dialogView.findViewById(R.id.carModelInput);
+        TextInputEditText priceInput = dialogView.findViewById(R.id.carPriceInput);
         View selectImageButton = dialogView.findViewById(R.id.selectImageButton);
 
         selectedImageBase64 = null;

@@ -3,11 +3,11 @@ package com.example.apni_svari;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class ConfirmUserName extends AppCompatActivity {
 
-    private EditText usernameInput;
+    private TextInputEditText usernameInput;
     private Button confirmBtn;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
@@ -82,7 +82,6 @@ public class ConfirmUserName extends AppCompatActivity {
                                 userData.put("uid", user.getUid());
                                 if (user.getPhoneNumber() != null) userData.put("phone", user.getPhoneNumber());
                                 
-                                // Use SetOptions.merge() to avoid deleting the phone number if it already exists!
                                 db.collection("users").document(user.getUid())
                                         .set(userData, SetOptions.merge())
                                         .addOnCompleteListener(t2 -> {
