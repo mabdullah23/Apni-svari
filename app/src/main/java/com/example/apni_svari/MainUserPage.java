@@ -47,7 +47,7 @@ public class MainUserPage extends AppCompatActivity {
 
         UserPagerAdapter adapter = new UserPagerAdapter(this);
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(5);
+        viewPager.setOffscreenPageLimit(4);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -62,9 +62,6 @@ public class MainUserPage extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_profile) {
                 viewPager.setCurrentItem(3, true);
-                return true;
-            } else if (id == R.id.nav_sell) {
-                viewPager.setCurrentItem(4, true);
                 return true;
             }
             return false;
@@ -87,9 +84,8 @@ public class MainUserPage extends AppCompatActivity {
                     case 3:
                         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
                         break;
-                    case 4:
                     default:
-                        bottomNavigationView.setSelectedItemId(R.id.nav_sell);
+                        bottomNavigationView.setSelectedItemId(R.id.nav_home);
                         break;
                 }
             }

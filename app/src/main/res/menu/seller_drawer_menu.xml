@@ -16,5 +16,9 @@
         android:id="@+id/nav_seller_message"
         android:icon="@android:drawable/ic_menu_send"
         android:title="Proposals" />
+    <item
+        android:id="@+id/nav_seller_logout"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="Logout" />
 </menu>
 

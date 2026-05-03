@@ -1,19 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/fragmentLabel"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fragment"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/fragmentLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Get Honest Price From AI"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp" />
+
+        <EditText
+            android:id="@+id/carNameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Car Name" />
+
+        <EditText
+            android:id="@+id/carModelInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Model" />
+
+        <EditText
+            android:id="@+id/carConditionInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Condition" />
+
+        <EditText
+            android:id="@+id/carPriceInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Expected Price" />
+
+        <Button
+            android:id="@+id/getPriceBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Get AI Suggestion"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/resultText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Result will appear here"
+            android:paddingTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

@@ -3,7 +3,7 @@
     <string name="default_web_client_id">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
     <string name="home_tab">Home</string>
     <string name="search_tab">Search</string>
-    <string name="favourite_tab">Favourite</string>
+    <string name="favourite_tab">History</string>
     <string name="profile_tab">Profile</string>
     <string name="sell_tab">Sell</string>
     <string name="home_fragment_text">This is HomeFragment</string>
