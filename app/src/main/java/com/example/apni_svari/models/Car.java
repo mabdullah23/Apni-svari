@@ -1,5 +1,8 @@
 package com.example.apni_svari.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Car {
     private String id;
     private String name;
@@ -9,6 +12,8 @@ public class Car {
     private double price;
     private String imageUrl;
     private String imageBase64;
+    /** Additional images for this car (Base64 strings or URLs). */
+    private List<String> extraImages;
     private String model;
 
     public Car() { }
@@ -45,6 +50,17 @@ public class Car {
 
     public String getImageBase64() { return imageBase64; }
     public void setImageBase64(String imageBase64) { this.imageBase64 = imageBase64; }
+
+    public List<String> getExtraImages() {
+        if (extraImages == null) {
+            extraImages = new ArrayList<>();
+        }
+        return extraImages;
+    }
+
+    public void setExtraImages(List<String> extraImages) {
+        this.extraImages = extraImages;
+    }
 
     public String getModel() { return model; }
     public void setModel(String model) { this.model = model; }

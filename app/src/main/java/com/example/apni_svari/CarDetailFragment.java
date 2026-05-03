@@ -1,5 +1,7 @@
 package com.example.apni_svari;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +17,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.apni_svari.adapters.ExtraImagesAdapter;
 import com.example.apni_svari.data.FirestoreRepository;
 import com.example.apni_svari.models.Car;
 import com.example.apni_svari.models.Proposal;
@@ -22,8 +28,7 @@ import com.example.apni_svari.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class CarDetailFragment extends Fragment {
 
@@ -39,6 +44,10 @@ public class CarDetailFragment extends Fragment {
     private TextView modelText;
     private EditText proposedPriceInput;
     private Button sendProposalBtn;
+    private ImageButton callOwnerBtn;
+    
+    private RecyclerView extraImagesRecycler;
+    private ExtraImagesAdapter extraImagesAdapter;
 
     public static CarDetailFragment newInstance(String carId) {
         CarDetailFragment fragment = new CarDetailFragment();
@@ -64,9 +73,33 @@ public class CarDetailFragment extends Fragment {
         modelText = view.findViewById(R.id.carDetailModel);
         proposedPriceInput = view.findViewById(R.id.proposedPriceInput);
         sendProposalBtn = view.findViewById(R.id.sendProposalButton);
+        callOwnerBtn = view.findViewById(R.id.callOwnerButton);
+        extraImagesRecycler = view.findViewById(R.id.extraImagesRecycler);
+
+        extraImagesRecycler.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        extraImagesAdapter = new ExtraImagesAdapter();
+        extraImagesRecycler.setAdapter(extraImagesAdapter);
 
         view.findViewById(R.id.carDetailBack).setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
         sendProposalBtn.setOnClickListener(v -> submitProposal());
+        
+        callOwnerBtn.setOnClickListener(v -> {
+            if (currentCar != null && !TextUtils.isEmpty(currentCar.getOwnerPhone())) {
+                String phone = currentCar.getOwnerPhone().trim();
+                // Basic cleanup
+                if (phone.equalsIgnoreCase("null") || phone.isEmpty()) {
+                    Toast.makeText(requireContext(), "Phone number not available", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                String uriString = phone.startsWith("tel:") ? phone : "tel:" + phone;
+                intent.setData(Uri.parse(uriString));
+                startActivity(intent);
+            } else {
+                Toast.makeText(requireContext(), "Phone number not available", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Bundle args = getArguments();
         if (args != null) {
@@ -89,38 +122,32 @@ public class CarDetailFragment extends Fragment {
                         return;
                     }
 
-                    currentCar = snapshot.toObject(Car.class);
-                    if (currentCar == null) {
-                        currentCar = new Car();
-                    }
-                    currentCar.setId(snapshot.getId());
-                    if (TextUtils.isEmpty(currentCar.getName())) {
-                        currentCar.setName(snapshot.getString("carName"));
-                    }
-                    if (TextUtils.isEmpty(currentCar.getOwnerId())) {
-                        currentCar.setOwnerId(snapshot.getString("ownerId"));
-                    }
-                    if (TextUtils.isEmpty(currentCar.getOwnerId())) {
-                        currentCar.setOwnerId(snapshot.getString("ownerUid"));
-                    }
-                    if (TextUtils.isEmpty(currentCar.getOwnerName())) {
-                        currentCar.setOwnerName(snapshot.getString("ownerName"));
-                    }
-                    if (TextUtils.isEmpty(currentCar.getImageBase64())) {
-                        currentCar.setImageBase64(snapshot.getString("imageBase64"));
-                    }
-                    if (TextUtils.isEmpty(currentCar.getImageUrl())) {
-                        currentCar.setImageUrl(snapshot.getString("imageUrl"));
-                    }
-                    if (TextUtils.isEmpty(currentCar.getModel())) {
-                        currentCar.setModel(snapshot.getString("model"));
-                    }
-                    Number price = snapshot.getDouble("price");
-                    if (price != null) {
-                        currentCar.setPrice(price.doubleValue());
+                    currentCar = repository.mapCar(snapshot);
+                    
+                    // Fallback for extra images
+                    if (currentCar.getExtraImages().isEmpty()) {
+                        List<String> extras = (List<String>) snapshot.get("extraImages");
+                        if (extras != null) {
+                            currentCar.setExtraImages(extras);
+                        }
                     }
 
-                    bindCarData();
+                    // FORCE FETCH OWNER PROFILE if name or phone is missing
+                    if (!TextUtils.isEmpty(currentCar.getOwnerId())) {
+                        repository.fetchUserById(currentCar.getOwnerId(), user -> {
+                            if (user != null) {
+                                if (TextUtils.isEmpty(currentCar.getOwnerPhone()) || currentCar.getOwnerPhone().equalsIgnoreCase("null")) {
+                                    currentCar.setOwnerPhone(user.getPhone());
+                                }
+                                if (TextUtils.isEmpty(currentCar.getOwnerName()) || currentCar.getOwnerName().equalsIgnoreCase("null")) {
+                                    currentCar.setOwnerName(user.getName());
+                                }
+                            }
+                            bindCarData();
+                        });
+                    } else {
+                        bindCarData();
+                    }
                 })
                 .addOnFailureListener(e -> Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
     }
@@ -149,8 +176,10 @@ public class CarDetailFragment extends Fragment {
         }
 
         priceText.setText("Price: ₹ " + currentCar.getPrice());
-        ownerText.setText("Owner: " + safe(currentCar.getOwnerName(), currentCar.getOwnerId()));
+        ownerText.setText("Owner: " + safe(currentCar.getOwnerName(), "Unknown"));
         modelText.setText("Model: " + safe(currentCar.getModel(), "-") );
+        
+        extraImagesAdapter.setImages(currentCar.getExtraImages());
     }
 
     private void submitProposal() {
@@ -209,14 +238,7 @@ public class CarDetailFragment extends Fragment {
             if (!TextUtils.isEmpty(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())) {
                 return FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
             }
-            if (!TextUtils.isEmpty(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
-                return FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            }
         }
-        return buyerIdFallback();
-    }
-
-    private String buyerIdFallback() {
         return getCurrentUserId();
     }
 
@@ -225,7 +247,6 @@ public class CarDetailFragment extends Fragment {
     }
 
     private String safe(String value, String fallback) {
-        return value == null || value.trim().isEmpty() ? fallback : value;
+        return (value == null || value.trim().isEmpty() || value.equalsIgnoreCase("null")) ? fallback : value;
     }
 }
-
