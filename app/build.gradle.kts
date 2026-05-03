@@ -40,6 +40,10 @@ android {
             )
         }
     }
+    buildFeatures {
+        // Enable generation of BuildConfig because the project declares custom fields
+        buildConfig = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
