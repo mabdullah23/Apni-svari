@@ -79,6 +79,39 @@ public class FirestoreRepository {
                 .addOnFailureListener(e -> callback.onLoaded(new ArrayList<>()));
     }
 
+    public void searchCars(String name, String model, double price, String currentUserId, CarsCallback callback) {
+        db.collection("cars").get()
+                .addOnSuccessListener(snapshot -> {
+                    List<Car> cars = new ArrayList<>();
+
+                    String nameLower = name.toLowerCase();
+                    String modelLower = model.toLowerCase();
+
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        Car car = mapCar(doc);
+                        String ownerId = car.getOwnerId();
+
+                        // Exclude current user's cars
+                        if (ownerId != null && ownerId.equals(currentUserId)) {
+                            continue;
+                        }
+
+                        // Filter by name, model, and price
+                        String carNameLower = (car.getName() == null ? "" : car.getName()).toLowerCase();
+                        String carModelLower = (car.getModel() == null ? "" : car.getModel()).toLowerCase();
+
+                        if (carNameLower.contains(nameLower) &&
+                                carModelLower.contains(modelLower) &&
+                                car.getPrice() >= price) {
+                            cars.add(car);
+                        }
+                    }
+
+                    enrichCarsWithOwnerNames(cars, callback);
+                })
+                .addOnFailureListener(e -> callback.onLoaded(new ArrayList<>()));
+    }
+
     public void fetchProposalsForOwner(String ownerId, ProposalsCallback callback) {
         if (TextUtils.isEmpty(ownerId)) {
             callback.onLoaded(new ArrayList<>());
