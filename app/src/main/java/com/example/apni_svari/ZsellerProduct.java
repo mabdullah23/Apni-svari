@@ -1,5 +1,8 @@
 package com.example.apni_svari;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ZsellerProduct {
     private String id;
     private String imageBase64;
@@ -7,8 +10,10 @@ public class ZsellerProduct {
     private String model;
     private String price;
     private String offeredPrice;
+    private List<String> extraImages;
 
     public ZsellerProduct() {
+        this.extraImages = new ArrayList<>();
     }
 
     public ZsellerProduct(String id, String imageBase64, String carName, String model, String price, String offeredPrice) {
@@ -18,6 +23,7 @@ public class ZsellerProduct {
         this.model = model;
         this.price = price;
         this.offeredPrice = offeredPrice;
+        this.extraImages = new ArrayList<>();
     }
 
     public String getId() {
@@ -67,5 +73,13 @@ public class ZsellerProduct {
     public void setOfferedPrice(String offeredPrice) {
         this.offeredPrice = offeredPrice;
     }
-}
 
+    public List<String> getExtraImages() {
+        if (extraImages == null) extraImages = new ArrayList<>();
+        return extraImages;
+    }
+
+    public void setExtraImages(List<String> extraImages) {
+        this.extraImages = extraImages;
+    }
+}

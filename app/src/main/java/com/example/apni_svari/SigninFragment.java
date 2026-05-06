@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,10 +38,10 @@ public class SigninFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        EditText username = view.findViewById(R.id.signinUsername);
-        EditText email = view.findViewById(R.id.signinEmail);
-        EditText password = view.findViewById(R.id.signinPassword);
-        EditText phone = view.findViewById(R.id.signinPhone); // NEW FIELD
+        TextInputEditText username = view.findViewById(R.id.signinUsername);
+        TextInputEditText email = view.findViewById(R.id.signinEmail);
+        TextInputEditText password = view.findViewById(R.id.signinPassword);
+        TextInputEditText phone = view.findViewById(R.id.signinPhone); // NEW FIELD
         Button signupBtn = view.findViewById(R.id.signinButton);
 
         signupBtn.setOnClickListener(v -> {

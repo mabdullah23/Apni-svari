@@ -9,9 +9,9 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -44,6 +44,7 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
     private ActivityResultLauncher<String> imagePickerLauncher;
     private String selectedImageBase64;
     private ImageView dialogImagePreview;
+    private String ownerPhoneNumber = "";
 
     @Nullable
     @Override
@@ -69,16 +70,30 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
         addIcon.setOnClickListener(v -> showAddProductDialog());
 
         loadProducts();
+        fetchOwnerDetails();
 
         return view;
+    }
+
+    private void fetchOwnerDetails() {
+        if (currentUser == null) return;
+        db.collection("users").document(currentUser.getUid()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        ownerPhoneNumber = documentSnapshot.getString("phone");
+                        if (ownerPhoneNumber == null || ownerPhoneNumber.isEmpty()) {
+                            ownerPhoneNumber = documentSnapshot.getString("phoneNumber");
+                        }
+                    }
+                });
     }
 
     private void showAddProductDialog() {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_product, null);
         dialogImagePreview = dialogView.findViewById(R.id.dialogProductImage);
-        EditText nameInput = dialogView.findViewById(R.id.carNameInput);
-        EditText modelInput = dialogView.findViewById(R.id.carModelInput);
-        EditText priceInput = dialogView.findViewById(R.id.carPriceInput);
+        TextInputEditText nameInput = dialogView.findViewById(R.id.carNameInput);
+        TextInputEditText modelInput = dialogView.findViewById(R.id.carModelInput);
+        TextInputEditText priceInput = dialogView.findViewById(R.id.carPriceInput);
         View selectImageButton = dialogView.findViewById(R.id.selectImageButton);
 
         selectedImageBase64 = null;
@@ -134,6 +149,7 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
         carData.put("price", Double.parseDouble(price));
         carData.put("imageBase64", imageBase64);
         carData.put("createdAt", com.google.firebase.Timestamp.now());
+        carData.put("extraImages", new ArrayList<String>());
 
         db.collection("cars").document(documentId)
                 .set(carData)
@@ -146,12 +162,10 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
             return;
         }
 
-        // Remove previous listener if it exists
         if (productsListener != null) {
             productsListener.remove();
         }
 
-        // Set up real-time listener
         productsListener = db.collection("cars")
                 .whereEqualTo("ownerId", currentUser.getUid())
                 .addSnapshotListener((querySnapshots, error) -> {
@@ -162,14 +176,17 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
                     if (querySnapshots != null) {
                         productList.clear();
                         for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshots.getDocuments()) {
-                            productList.add(new ZsellerProduct(
+                            ZsellerProduct product = new ZsellerProduct(
                                     doc.getId(),
                                     doc.getString("imageBase64"),
                                     firstNonEmpty(doc.getString("carName"), doc.getString("name")),
                                     doc.getString("model"),
                                     String.valueOf(doc.get("price")),
                                     ""
-                            ));
+                            );
+                            List<String> extras = (List<String>) doc.get("extraImages");
+                            if (extras != null) product.setExtraImages(extras);
+                            productList.add(product);
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -199,7 +216,6 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Remove listener to prevent memory leaks
         if (productsListener != null) {
             productsListener.remove();
         }
@@ -220,7 +236,6 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
             return;
         }
 
-        // Show confirmation dialog
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.seller_delete_product)
                 .setMessage("Are you sure you want to delete this product?")
@@ -245,13 +260,11 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
         if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().trim().isEmpty()) {
             return currentUser.getDisplayName();
         }
-        if (currentUser.getEmail() != null && !currentUser.getEmail().trim().isEmpty()) {
-            return currentUser.getEmail();
-        }
-        return currentUser.getUid();
+        return currentUser.getEmail() != null ? currentUser.getEmail() : currentUser.getUid();
     }
 
     private String resolveOwnerPhone() {
+        if (ownerPhoneNumber != null && !ownerPhoneNumber.trim().isEmpty()) return ownerPhoneNumber;
         return currentUser.getPhoneNumber() == null ? "" : currentUser.getPhoneNumber();
     }
 
@@ -259,4 +272,3 @@ public class ZsellerHome extends Fragment implements ZsellerHomeAdapter.OnProduc
         return (primary != null && !primary.trim().isEmpty()) ? primary : fallback;
     }
 }
-

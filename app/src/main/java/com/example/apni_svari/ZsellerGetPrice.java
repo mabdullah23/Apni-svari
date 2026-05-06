@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +28,7 @@ public class ZsellerGetPrice extends Fragment {
     // Gemini generateContent endpoint for text-only prompt requests.
     private static final String MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
-    private EditText name, model, condition, price;
+    private TextInputEditText name, model, condition, price;
     private TextView result;
 
     @Nullable

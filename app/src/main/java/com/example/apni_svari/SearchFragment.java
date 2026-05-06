@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SearchFragment extends Fragment {
 
-    private EditText searchCarName, searchCarModel, searchCarPrice;
+    private TextInputEditText searchCarName, searchCarModel, searchCarPrice;
     private Button searchButton;
     private RecyclerView searchResultsRecycler;
     private final List<Car> searchResults = new ArrayList<>();
