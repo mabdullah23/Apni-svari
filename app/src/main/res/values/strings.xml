@@ -25,6 +25,7 @@
     <string name="drawer_open">Open Navigation Drawer</string>
     <string name="drawer_close">Close Navigation Drawer</string>
     <string name="seller_open_drawer">Open Drawer</string>
+    <string name="seller_close_drawer">Close Drawer</string>
     <string name="seller_home_title">Seller Home</string>
     <string name="seller_add_product">Add Product</string>
     <string name="seller_delete_product">Delete Product</string>

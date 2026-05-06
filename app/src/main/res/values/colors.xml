@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Material Design Colors -->
+    <color name="primary_blue">#2196F3</color>
+    <color name="primary_dark_blue">#1976D2</color>
+    <color name="accent_color">#FF6F00</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="dark_gray">#616161</color>
+    <color name="error_red">#F44336</color>
+    <color name="success_green">#4CAF50</color>
+    <color name="warning_orange">#FF9800</color>
 </resources>

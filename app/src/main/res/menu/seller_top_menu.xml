@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_open_drawer"
-        android:icon="@android:drawable/ic_menu_more"
+        android:icon="@drawable/ic_hamburger_menu"
         android:title="@string/seller_open_drawer"
         app:showAsAction="always"
         app:iconTint="@android:color/white" />
