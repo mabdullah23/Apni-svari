@@ -19,15 +19,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/backButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/backarrow"
             android:contentDescription="Back"
-            android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:tint="@android:color/white" />
+            android:padding="12dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/userNameText"

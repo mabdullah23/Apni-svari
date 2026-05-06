@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +43,10 @@ public class ZMainSellerPage extends AppCompatActivity {
                 R.string.seller_open_drawer,
                 R.string.seller_close_drawer
         );
+        // Ensure the hamburger (drawer) icon is white
+        try {
+            toggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, android.R.color.white));
+        } catch (Exception ignored) {}
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -141,6 +146,27 @@ public class ZMainSellerPage extends AppCompatActivity {
         drawerLayout.closeDrawers();
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(ZMainSellerPage.this, MainRegPage.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // If drawer is open, close it first
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(androidx.core.view.GravityCompat.START)) {
+            drawerLayout.closeDrawer(androidx.core.view.GravityCompat.START);
+            return;
+        }
+
+        // If there are fragments in back stack, pop one
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+            return;
+        }
+
+        // Otherwise navigate back to Ask_user (what would you like to do) instead of closing the app
+        Intent intent = new Intent(ZMainSellerPage.this, Ask_user.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

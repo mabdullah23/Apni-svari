@@ -1,12 +1,14 @@
 package com.example.apni_svari;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ public class MainUserPage extends AppCompatActivity {
 
     private View buyerDetailContainer;
     private ShapeableImageView headerProfileImage;
+    private ViewPager2 viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +51,23 @@ public class MainUserPage extends AppCompatActivity {
             }
         });
 
-        android.widget.ImageButton backButton = findViewById(R.id.backButton);
+        android.widget.ImageView backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> {
+            // If there are fragments on back stack, pop them
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
                 if (buyerDetailContainer != null) {
                     buyerDetailContainer.setVisibility(View.GONE);
                 }
-            } else {
+            } 
+            // If on home page (position 0), go to Ask_user page
+            else if (viewPager.getCurrentItem() == 0) {
+                Intent intent = new Intent(MainUserPage.this, Ask_user.class);
+                startActivity(intent);
+                finish();
+            } 
+            // Otherwise, just go back
+            else {
                 onBackPressed();
             }
         });
@@ -71,7 +83,7 @@ public class MainUserPage extends AppCompatActivity {
         // Load profile image
         loadHeaderProfileImage();
 
-        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
 
         UserPagerAdapter adapter = new UserPagerAdapter(this);
@@ -168,5 +180,31 @@ public class MainUserPage extends AppCompatActivity {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // If there are fragments on the back stack, pop them first
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+            if (buyerDetailContainer != null) buyerDetailContainer.setVisibility(View.GONE);
+            return;
+        }
+
+        // If current page is Home (index 0), go back to Ask_user (what would you like to do)
+        if (viewPager != null && viewPager.getCurrentItem() == 0) {
+            Intent intent = new Intent(MainUserPage.this, Ask_user.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // If not on home, navigate to home page instead of closing
+        if (viewPager != null) {
+            viewPager.setCurrentItem(0, true);
+            return;
+        }
+
+        super.onBackPressed();
     }
 }
