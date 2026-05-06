@@ -1,6 +1,11 @@
 package com.example.apni_svari;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -11,10 +16,17 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainUserPage extends AppCompatActivity {
 
+    private static final String PREFS_NAME = "profile_image_prefs";
+    private static final String IMAGE_PREFIX = "profile_image_";
+
     private View buyerDetailContainer;
+    private ShapeableImageView headerProfileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +34,8 @@ public class MainUserPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_user_page);
         buyerDetailContainer = findViewById(R.id.buyerDetailContainer);
+        headerProfileImage = findViewById(R.id.headerProfileImage);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -47,12 +61,15 @@ public class MainUserPage extends AppCompatActivity {
         });
 
         android.widget.TextView nameView = findViewById(R.id.userNameText);
-        com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {
             nameView.setText(getString(R.string.hello_user_with_name, user.getDisplayName()));
         } else if (user != null && user.getEmail() != null) {
             nameView.setText(getString(R.string.hello_user_with_name, user.getEmail()));
         }
+
+        // Load profile image
+        loadHeaderProfileImage();
 
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -116,5 +133,40 @@ public class MainUserPage extends AppCompatActivity {
                 .replace(R.id.buyerDetailContainer, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void refreshHeaderImage() {
+        loadHeaderProfileImage();
+    }
+
+    private void loadHeaderProfileImage() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null || headerProfileImage == null) {
+            return;
+        }
+
+        String encoded = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getString(IMAGE_PREFIX + currentUser.getUid(), null);
+
+        if (encoded == null || encoded.isEmpty()) {
+            headerProfileImage.setImageResource(R.drawable.profilepic);
+            return;
+        }
+
+        Bitmap bitmap = base64ToBitmap(encoded);
+        if (bitmap != null) {
+            headerProfileImage.setImageBitmap(bitmap);
+        } else {
+            headerProfileImage.setImageResource(R.drawable.profilepic);
+        }
+    }
+
+    private Bitmap base64ToBitmap(String encoded) {
+        try {
+            byte[] decodedBytes = Base64.decode(encoded, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -68,6 +68,11 @@ public class ProfileFragment extends Fragment {
             getPrefs().edit().remove(getImageKey()).apply();
             profileImageView.setImageResource(R.drawable.profilepic);
             Toast.makeText(getContext(), "Profile picture removed", Toast.LENGTH_SHORT).show();
+            
+            // Notify the MainUserPage to refresh the header image
+            if (getActivity() instanceof MainUserPage) {
+                ((MainUserPage) getActivity()).refreshHeaderImage();
+            }
         });
 
         logoutButton.setOnClickListener(v -> {
@@ -110,6 +115,11 @@ public class ProfileFragment extends Fragment {
             String encoded = bitmapToBase64(bitmap);
             getPrefs().edit().putString(getImageKey(), encoded).apply();
             Toast.makeText(getContext(), "Profile picture updated", Toast.LENGTH_SHORT).show();
+            
+            // Notify the MainUserPage to refresh the header image
+            if (getActivity() instanceof MainUserPage) {
+                ((MainUserPage) getActivity()).refreshHeaderImage();
+            }
         } catch (Exception e) {
             Toast.makeText(getContext(), "Image update failed", Toast.LENGTH_SHORT).show();
         }
