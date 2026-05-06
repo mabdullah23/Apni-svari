@@ -22,7 +22,8 @@
             android:elevation="4dp"
             app:title="APNI-Svari"
             app:titleTextAppearance="@style/SellerToolbarTitle"
-            app:titleCentered="true" />
+            app:titleCentered="true"
+            app:navigationIcon="@drawable/backarrow" />
 
         <FrameLayout
             android:id="@+id/fragmentContainer"

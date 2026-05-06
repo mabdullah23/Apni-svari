@@ -34,6 +34,18 @@ public class MainUserPage extends AppCompatActivity {
             }
         });
 
+        android.widget.ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(v -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+                if (buyerDetailContainer != null) {
+                    buyerDetailContainer.setVisibility(View.GONE);
+                }
+            } else {
+                onBackPressed();
+            }
+        });
+
         android.widget.TextView nameView = findViewById(R.id.userNameText);
         com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {

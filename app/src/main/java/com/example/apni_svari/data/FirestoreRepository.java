@@ -161,32 +161,47 @@ public class FirestoreRepository {
     }
 
     public void createProposal(Proposal proposal, OperationCallback callback) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("carId", proposal.getCarId());
-        data.put("buyerId", proposal.getBuyerId());
-        data.put("buyerName", proposal.getBuyerName());
-        data.put("ownerId", proposal.getOwnerId());
-        data.put("proposedPrice", proposal.getProposedPrice());
-        data.put("carModel", proposal.getCarModel());
-        data.put("status", proposal.getStatus() == null ? "pending" : proposal.getStatus());
-        data.put("timestamp", proposal.getTimestamp() == 0L ? System.currentTimeMillis() : proposal.getTimestamp());
-
-        db.collection("proposals")
-                .whereEqualTo("carId", proposal.getCarId())
-                .whereEqualTo("buyerId", proposal.getBuyerId())
+        // First, fetch the car document to get original price and image
+        db.collection("cars").document(proposal.getCarId())
                 .get()
-                .addOnSuccessListener(snapshot -> {
-                    if (!snapshot.isEmpty()) {
-                        String proposalId = snapshot.getDocuments().get(0).getId();
-                        db.collection("proposals").document(proposalId)
-                                .update("proposedPrice", proposal.getProposedPrice())
-                                .addOnSuccessListener(unused -> callback.onComplete(true, null))
-                                .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
-                    } else {
-                        db.collection("proposals").add(data)
-                                .addOnSuccessListener(doc -> callback.onComplete(true, null))
-                                .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
+                .addOnSuccessListener(carSnapshot -> {
+                    if (!carSnapshot.exists()) {
+                        callback.onComplete(false, "Car not found");
+                        return;
                     }
+
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("carId", proposal.getCarId());
+                    data.put("carName", firstNonEmpty(carSnapshot.getString("carName"), carSnapshot.getString("name")));
+                    data.put("buyerId", proposal.getBuyerId());
+                    data.put("buyerName", proposal.getBuyerName());
+                    data.put("buyerEmail", proposal.getBuyerEmail());
+                    data.put("ownerId", proposal.getOwnerId());
+                    data.put("proposedPrice", proposal.getProposedPrice());
+                    data.put("carModel", proposal.getCarModel());
+                    data.put("originalPrice", carSnapshot.get("price"));
+                    data.put("carImage", carSnapshot.getString("imageBase64"));
+                    data.put("status", proposal.getStatus() == null ? "pending" : proposal.getStatus());
+                    data.put("timestamp", proposal.getTimestamp() == 0L ? System.currentTimeMillis() : proposal.getTimestamp());
+
+                    db.collection("proposals")
+                            .whereEqualTo("carId", proposal.getCarId())
+                            .whereEqualTo("buyerId", proposal.getBuyerId())
+                            .get()
+                            .addOnSuccessListener(snapshot -> {
+                                if (!snapshot.isEmpty()) {
+                                    String proposalId = snapshot.getDocuments().get(0).getId();
+                                    db.collection("proposals").document(proposalId)
+                                            .update("proposedPrice", proposal.getProposedPrice())
+                                            .addOnSuccessListener(unused -> callback.onComplete(true, null))
+                                            .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
+                                } else {
+                                    db.collection("proposals").add(data)
+                                            .addOnSuccessListener(doc -> callback.onComplete(true, null))
+                                            .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
+                                }
+                            })
+                            .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
                 })
                 .addOnFailureListener(e -> callback.onComplete(false, e.getMessage()));
     }
@@ -319,15 +334,25 @@ public class FirestoreRepository {
         }
         AtomicInteger remaining = new AtomicInteger(proposals.size());
         for (Proposal proposal : proposals) {
-            if (!TextUtils.isEmpty(proposal.getBuyerName())) {
+            if (!TextUtils.isEmpty(proposal.getBuyerName()) && !TextUtils.isEmpty(proposal.getBuyerEmail())) {
                 if (remaining.decrementAndGet() == 0) callback.onLoaded(proposals);
                 continue;
             }
             fetchUserById(proposal.getBuyerId(), user -> {
                 if (user != null) {
-                    proposal.setBuyerName(!TextUtils.isEmpty(user.getName()) ? user.getName() : user.getId());
+                    if (TextUtils.isEmpty(proposal.getBuyerName())) {
+                        proposal.setBuyerName(!TextUtils.isEmpty(user.getName()) ? user.getName() : user.getId());
+                    }
+                    if (TextUtils.isEmpty(proposal.getBuyerEmail())) {
+                        proposal.setBuyerEmail(user.getEmail() != null ? user.getEmail() : "");
+                    }
                 } else {
-                    proposal.setBuyerName(proposal.getBuyerId());
+                    if (TextUtils.isEmpty(proposal.getBuyerName())) {
+                        proposal.setBuyerName(proposal.getBuyerId());
+                    }
+                    if (TextUtils.isEmpty(proposal.getBuyerEmail())) {
+                        proposal.setBuyerEmail("Email not available");
+                    }
                 }
                 if (remaining.decrementAndGet() == 0) callback.onLoaded(proposals);
             });
@@ -384,8 +409,28 @@ public class FirestoreRepository {
         if (proposal == null) proposal = new Proposal();
         proposal.setId(doc.getId());
         if (TextUtils.isEmpty(proposal.getCarId())) proposal.setCarId(doc.getString("carId"));
+        if (TextUtils.isEmpty(proposal.getCarName())) proposal.setCarName(doc.getString("carName"));
         if (TextUtils.isEmpty(proposal.getBuyerId())) proposal.setBuyerId(doc.getString("buyerId"));
         if (TextUtils.isEmpty(proposal.getOwnerId())) proposal.setOwnerId(doc.getString("ownerId"));
+        if (TextUtils.isEmpty(proposal.getBuyerEmail())) proposal.setBuyerEmail(doc.getString("buyerEmail"));
+        if (TextUtils.isEmpty(proposal.getCarModel())) proposal.setCarModel(doc.getString("carModel"));
+        if (TextUtils.isEmpty(proposal.getCarImage())) proposal.setCarImage(doc.getString("carImage"));
+        if (TextUtils.isEmpty(proposal.getStatus())) proposal.setStatus(doc.getString("status"));
+        
+        // Map originalPrice if available
+        Object originalPriceObj = doc.get("originalPrice");
+        if (originalPriceObj instanceof Number) {
+            proposal.setOriginalPrice(((Number) originalPriceObj).doubleValue());
+        }
+        
+        // Map proposedPrice if not already set
+        if (proposal.getProposedPrice() == 0) {
+            Object proposedPriceObj = doc.get("proposedPrice");
+            if (proposedPriceObj instanceof Number) {
+                proposal.setProposedPrice(((Number) proposedPriceObj).doubleValue());
+            }
+        }
+        
         return proposal;
     }
 
@@ -397,6 +442,7 @@ public class FirestoreRepository {
         if (TextUtils.isEmpty(name)) name = snapshot.getString("username");
         user.setName(name);
         user.setPhone(getPhoneFromSnapshot(snapshot));
+        user.setEmail(snapshot.getString("email"));
         return user;
     }
 }

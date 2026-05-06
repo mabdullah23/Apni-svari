@@ -13,39 +13,121 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <TextView
-            android:id="@+id/proposalBuyerName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Requester"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/proposalPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Proposed price" />
-
-        <TextView
-            android:id="@+id/proposalCarModel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Car model" />
-
-        <TextView
-            android:id="@+id/proposalStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Status" />
-
+        <!-- Header with Buyer Name and Status -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/proposalBuyerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Buyer Name"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/proposalBuyerEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="buyer@email.com"
+                    android:textSize="12sp"
+                    android:layout_marginTop="2dp"
+                    android:alpha="0.7" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/proposalStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:padding="6dp"
+                android:background="@drawable/status_background"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <!-- Car Details Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginVertical="8dp">
+
+            <ImageView
+                android:id="@+id/proposalCarImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/carimg"
+                android:scaleType="centerCrop"
+                android:contentDescription="Car Image"
+                android:background="@drawable/circular_image_background"
+                android:layout_marginEnd="12dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/proposalCarModel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Car Model"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Original Price:"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/proposalOriginalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₹ 500000"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proposed Price:"
+                    android:textSize="12sp"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:id="@+id/proposalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₹ 480000"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="#FF6F00" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:gravity="end"
             android:orientation="horizontal">
 
@@ -53,14 +135,18 @@
                 android:id="@+id/btnAcceptProposal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Accept" />
+                android:text="Accept"
+                android:textColor="@android:color/white"
+                android:backgroundTint="?attr/colorPrimary" />
 
             <Button
                 android:id="@+id/btnRejectProposal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Reject" />
+                android:text="Reject"
+                android:textColor="?attr/colorPrimary"
+                android:backgroundTint="@android:color/transparent" />
         </LinearLayout>
 
     </LinearLayout>

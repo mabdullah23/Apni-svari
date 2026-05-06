@@ -67,7 +67,8 @@ public class ZMainSellerPage extends AppCompatActivity {
         if (drawerLayout.isDrawerOpen(androidx.core.view.GravityCompat.START)) {
             drawerLayout.closeDrawer(androidx.core.view.GravityCompat.START);
         } else {
-            drawerLayout.openDrawer(androidx.core.view.GravityCompat.START);
+            // Go back to previous page instead of closing app
+            onBackPressed();
         }
         return true;
     }
