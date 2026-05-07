@@ -5,53 +5,66 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
     tools:context=".MainUserPage">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/topBar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="8dp"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        app:title="APNI-Svari"
+        app:titleTextAppearance="@style/SellerToolbarTitle"
+        app:titleCentered="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/backButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/backarrow"
-            android:contentDescription="Back"
-            android:scaleType="fitCenter"
-            android:padding="12dp"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:focusable="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="16dp">
 
-        <TextView
-            android:id="@+id/userNameText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/hello_user"
-            android:textSize="20sp"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="8dp" />
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/backarrow"
+                android:contentDescription="Back"
+                android:scaleType="fitCenter"
+                android:padding="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/md_theme_light_onPrimary"
+                android:clickable="true"
+                android:focusable="true" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/headerProfileImage"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/profilepic"
-            android:contentDescription="Profile"
-            android:scaleType="centerCrop"
-            android:layout_marginEnd="4dp"
-            app:shapeAppearanceOverlay="@style/RoundedProfileImage"
-            android:background="@android:color/white" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/userNameText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hello_user"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_light_onPrimary"
+                android:layout_marginStart="12dp" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/headerProfileImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/profilepic"
+                android:contentDescription="Profile"
+                android:scaleType="centerCrop"
+                android:layout_marginEnd="8dp"
+                app:shapeAppearanceOverlay="@style/RoundedProfileImage"
+                android:background="@android:color/white" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -69,7 +82,7 @@
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true"
-        android:background="@android:color/white"
+        android:background="?attr/colorSurface"
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,6 +92,8 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:elevation="8dp"
         app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

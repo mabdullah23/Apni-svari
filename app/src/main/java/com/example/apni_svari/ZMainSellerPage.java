@@ -1,5 +1,6 @@
 package com.example.apni_svari;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.content.Intent;
 import android.widget.ImageView;
@@ -152,6 +153,7 @@ public class ZMainSellerPage extends AppCompatActivity {
     }
 
     @Override
+    @SuppressLint("MissingSuperCall,GestureBackNavigation")
     public void onBackPressed() {
         // If drawer is open, close it first
         if (drawerLayout != null && drawerLayout.isDrawerOpen(androidx.core.view.GravityCompat.START)) {
@@ -170,7 +172,5 @@ public class ZMainSellerPage extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-    }
-
-}
+    }}
 

@@ -1,5 +1,6 @@
 package com.example.apni_svari;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -183,6 +184,7 @@ public class MainUserPage extends AppCompatActivity {
     }
 
     @Override
+    @SuppressLint("GestureBackNavigation")
     public void onBackPressed() {
         // If there are fragments on the back stack, pop them first
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {

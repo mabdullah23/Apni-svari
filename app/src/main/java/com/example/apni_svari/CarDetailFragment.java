@@ -7,11 +7,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.annotation.NonNull;
@@ -39,12 +38,13 @@ public class CarDetailFragment extends Fragment {
     private Car currentCar;
 
     private ImageView carImage;
+    private TextView carNameText;
     private TextView priceText;
     private TextView ownerText;
     private TextView modelText;
     private TextInputEditText proposedPriceInput;
-    private Button sendProposalBtn;
-    private ImageButton callOwnerBtn;
+    private MaterialButton sendProposalBtn;
+    private MaterialButton callOwnerBtn;
     
     private RecyclerView extraImagesRecycler;
     private ExtraImagesAdapter extraImagesAdapter;
@@ -68,6 +68,7 @@ public class CarDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         carImage = view.findViewById(R.id.carDetailImage);
+        carNameText = view.findViewById(R.id.carDetailName);
         priceText = view.findViewById(R.id.carDetailPrice);
         ownerText = view.findViewById(R.id.carDetailOwner);
         modelText = view.findViewById(R.id.carDetailModel);
@@ -76,30 +77,36 @@ public class CarDetailFragment extends Fragment {
         callOwnerBtn = view.findViewById(R.id.callOwnerButton);
         extraImagesRecycler = view.findViewById(R.id.extraImagesRecycler);
 
-        extraImagesRecycler.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        extraImagesAdapter = new ExtraImagesAdapter();
-        extraImagesRecycler.setAdapter(extraImagesAdapter);
+        if (extraImagesRecycler != null) {
+            extraImagesRecycler.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+            extraImagesAdapter = new ExtraImagesAdapter();
+            extraImagesRecycler.setAdapter(extraImagesAdapter);
+        }
 
         view.findViewById(R.id.carDetailBack).setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
-        sendProposalBtn.setOnClickListener(v -> submitProposal());
         
-        callOwnerBtn.setOnClickListener(v -> {
-            if (currentCar != null && !TextUtils.isEmpty(currentCar.getOwnerPhone())) {
-                String phone = currentCar.getOwnerPhone().trim();
-                // Basic cleanup
-                if (phone.equalsIgnoreCase("null") || phone.isEmpty()) {
+        if (sendProposalBtn != null) {
+            sendProposalBtn.setOnClickListener(v -> submitProposal());
+        }
+        
+        if (callOwnerBtn != null) {
+            callOwnerBtn.setOnClickListener(v -> {
+                if (currentCar != null && !TextUtils.isEmpty(currentCar.getOwnerPhone())) {
+                    String phone = currentCar.getOwnerPhone().trim();
+                    if (phone.equalsIgnoreCase("null") || phone.isEmpty()) {
+                        Toast.makeText(requireContext(), "Phone number not available", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    String uriString = phone.startsWith("tel:") ? phone : "tel:" + phone;
+                    intent.setData(Uri.parse(uriString));
+                    startActivity(intent);
+                } else {
                     Toast.makeText(requireContext(), "Phone number not available", Toast.LENGTH_SHORT).show();
-                    return;
                 }
-                
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                String uriString = phone.startsWith("tel:") ? phone : "tel:" + phone;
-                intent.setData(Uri.parse(uriString));
-                startActivity(intent);
-            } else {
-                Toast.makeText(requireContext(), "Phone number not available", Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        }
 
         Bundle args = getArguments();
         if (args != null) {
@@ -124,7 +131,6 @@ public class CarDetailFragment extends Fragment {
 
                     currentCar = repository.mapCar(snapshot);
                     
-                    // Fallback for extra images
                     if (currentCar.getExtraImages().isEmpty()) {
                         List<String> extras = (List<String>) snapshot.get("extraImages");
                         if (extras != null) {
@@ -132,7 +138,6 @@ public class CarDetailFragment extends Fragment {
                         }
                     }
 
-                    // FORCE FETCH OWNER PROFILE if name or phone is missing
                     if (!TextUtils.isEmpty(currentCar.getOwnerId())) {
                         repository.fetchUserById(currentCar.getOwnerId(), user -> {
                             if (user != null) {
@@ -153,7 +158,8 @@ public class CarDetailFragment extends Fragment {
     }
 
     private void bindCarData() {
-        if (currentCar == null) {
+        if (currentCar == null || carImage == null || carNameText == null || priceText == null || 
+            ownerText == null || modelText == null) {
             return;
         }
 
@@ -175,11 +181,14 @@ public class CarDetailFragment extends Fragment {
             carImage.setImageResource(R.drawable.carimg);
         }
 
-        priceText.setText("Price: ₹ " + currentCar.getPrice());
+        carNameText.setText(safe(currentCar.getName(), "Car"));
+        priceText.setText("₹ " + currentCar.getPrice());
         ownerText.setText("Owner: " + safe(currentCar.getOwnerName(), "Unknown"));
         modelText.setText("Model: " + safe(currentCar.getModel(), "-") );
         
-        extraImagesAdapter.setImages(currentCar.getExtraImages());
+        if (extraImagesAdapter != null) {
+            extraImagesAdapter.setImages(currentCar.getExtraImages());
+        }
     }
 
     private void submitProposal() {

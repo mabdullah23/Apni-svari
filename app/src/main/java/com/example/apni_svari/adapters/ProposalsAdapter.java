@@ -49,7 +49,6 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
         holder.proposedPrice.setText("₹ " + formatPrice(proposal.getProposedPrice()));
         holder.originalPrice.setText("₹ " + formatPrice(proposal.getOriginalPrice()));
         
-        // Display car name and model
         String carDisplay = safeText(proposal.getCarName(), proposal.getCarModel());
         if (!carDisplay.equals(proposal.getCarModel()) && !safeText(proposal.getCarModel(), "").isEmpty()) {
             carDisplay += " - " + proposal.getCarModel();
@@ -58,8 +57,6 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
         
         String statusText = safeText(proposal.getStatus(), "pending");
         holder.status.setText(statusText.substring(0, 1).toUpperCase() + statusText.substring(1));
-        
-        // Display car image if available
         if (proposal.getCarImage() != null && !proposal.getCarImage().isEmpty()) {
             try {
                 byte[] decoded = Base64.decode(proposal.getCarImage(), Base64.DEFAULT);

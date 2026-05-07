@@ -4,6 +4,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Permission required to send SMS notifications when proposals are accepted/rejected -->
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- Permission required for posting notifications on Android 13+ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Declare that telephony is not required for this application -->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <application
         android:allowBackup="true"

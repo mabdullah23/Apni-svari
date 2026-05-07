@@ -76,7 +76,7 @@ public class LoginFragment extends Fragment {
         TextInputEditText password = view.findViewById(R.id.loginPassword);
         Button loginBtn = view.findViewById(R.id.loginButton);
         TextView dontHave = view.findViewById(R.id.dontHaveAccount);
-        ImageView googleImg = view.findViewById(R.id.googleSignIn);
+        androidx.cardview.widget.CardView googleSignInCard = view.findViewById(R.id.googleSignInCard);
 
         loginBtn.setOnClickListener(v -> {
             String e = email.getText().toString().trim();
@@ -92,7 +92,6 @@ public class LoginFragment extends Fragment {
             auth.signInWithEmailAndPassword(e, p)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Proceed to Ask_user (buyer/seller choice)
                             startActivity(new Intent(getContext(), Ask_user.class));
                             if (getActivity() != null) getActivity().finish();
                         } else {
@@ -102,13 +101,12 @@ public class LoginFragment extends Fragment {
         });
 
         dontHave.setOnClickListener(v -> {
-            // switch to SigninFragment
             if (getActivity() instanceof MainRegPage) {
                 ((MainRegPage) getActivity()).loadFragment(new SigninFragment());
             }
         });
 
-        googleImg.setOnClickListener(v -> {
+        googleSignInCard.setOnClickListener(v -> {
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             googleSignInLauncher.launch(signInIntent);
         });
@@ -118,35 +116,48 @@ public class LoginFragment extends Fragment {
 
     private void firebaseAuthWithGoogle(String idToken) {
         if (idToken == null) {
-            Toast.makeText(getContext(), "Google token is null", Toast.LENGTH_SHORT).show();
+            android.util.Log.e("GoogleSignIn", "ID Token is null");
+            Toast.makeText(getContext(), "Google token is null. Please try again.", Toast.LENGTH_SHORT).show();
             return;
         }
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(requireActivity(), task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getContext(), "Google auth successful!", Toast.LENGTH_SHORT).show();
-                    android.util.Log.d("GoogleSignIn", "Firebase auth successful");
-                    
-                    // Check if user has a displayName (simple way to check if first time)
-                    if (auth.getCurrentUser() != null && auth.getCurrentUser().getDisplayName() != null && !auth.getCurrentUser().getDisplayName().isEmpty()) {
-                        // Has displayName = returning user
-                        Toast.makeText(getContext(), "Welcome back!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getContext(), Ask_user.class));
-                        if (getActivity() != null) getActivity().finish();
+        
+        try {
+            AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        android.util.Log.d("GoogleSignIn", "Firebase auth successful");
+                        Toast.makeText(getContext(), "Authenticating...", Toast.LENGTH_SHORT).show();
+                        
+                        // Check if user has a displayName (simple way to check if first time)
+                        if (auth.getCurrentUser() != null && auth.getCurrentUser().getDisplayName() != null && !auth.getCurrentUser().getDisplayName().isEmpty()) {
+                            // Has displayName = returning user
+                            android.util.Log.d("GoogleSignIn", "Returning user, navigating to Ask_user");
+                            Intent intent = new Intent(getContext(), Ask_user.class);
+                            startActivity(intent);
+                            if (getActivity() != null) {
+                                getActivity().finish();
+                            }
+                        } else {
+                            // No displayName = first time user
+                            android.util.Log.d("GoogleSignIn", "New user, navigating to ConfirmUserName");
+                            Intent intent = new Intent(getContext(), ConfirmUserName.class);
+                            startActivity(intent);
+                            if (getActivity() != null) {
+                                getActivity().finish();
+                            }
+                        }
                     } else {
-                        // No displayName = first time user
-                        Toast.makeText(getContext(), "Going to setup username...", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getContext(), ConfirmUserName.class));
-                        if (getActivity() != null) getActivity().finish();
+                        Exception ex = task.getException();
+                        String msg = ex != null ? ex.getMessage() : "Unknown error";
+                        android.util.Log.e("GoogleSignIn", "Firebase auth failed: " + msg, ex);
+                        Toast.makeText(getContext(), "Auth failed: " + msg, Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Exception ex = task.getException();
-                    String msg = ex != null ? ex.getMessage() : "Unknown error";
-                    android.util.Log.e("GoogleSignIn", "Firebase auth failed: " + msg);
-                    Toast.makeText(getContext(), "Auth failed: " + msg, Toast.LENGTH_LONG).show();
-                }
-            });
+                });
+        } catch (Exception e) {
+            android.util.Log.e("GoogleSignIn", "Exception in firebaseAuthWithGoogle: " + e.getMessage(), e);
+            Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }
 

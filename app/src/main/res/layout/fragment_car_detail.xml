@@ -3,132 +3,194 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="8dp"
-        android:background="?attr/colorPrimary">
-
-        <ImageButton
-            android:id="@+id/carDetailBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/backarrow"
-            android:contentDescription="Back"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:tint="@android:color/white" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Car Details"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
-
-        <ImageView
-            android:id="@+id/carDetailImage"
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginTop="12dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/carimg"
-            android:contentDescription="Car image" />
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp">
 
-        <TextView
-            android:id="@+id/carDetailOwner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Owner"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/carDetailPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Price"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/carDetailModel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Model"
-            android:textSize="16sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/proposedPriceInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Proposed price"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/proposedPriceInput"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:contentDescription="Proposed price input field" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="16dp">
+
+                <ImageButton
+                    android:id="@+id/carDetailBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/backarrow"
+                    android:contentDescription="Back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    app:tint="@color/md_theme_light_onPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Car Details"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_theme_light_onPrimary"
+                    android:layout_marginStart="12dp" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <Button
-                android:id="@+id/sendProposalButton"
-                android:layout_width="0dp"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/carDetailImage"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:src="@drawable/carimg"
+                android:scaleType="centerCrop"
+                android:contentDescription="Car image"
+                app:shapeAppearance="@style/ImageViewCorner" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Send Proposal" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
 
-            <ImageButton
-                android:id="@+id/callOwnerButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="12dp"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                android:src="@android:drawable/ic_menu_call"
-                android:tint="?attr/colorPrimary"
-                android:contentDescription="Call Owner" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/carDetailName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Car Name"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/carDetailModel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Model"
+                        android:textSize="14sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/carDetailPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₹ 500000"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="16dp"
+                android:background="?attr/colorOutline" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seller Information"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/carDetailOwner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Owner Name"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                android:layout_marginTop="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/callOwnerButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Call Seller"
+                    android:textSize="14sp"
+                    app:cornerRadius="10dp"
+                    android:layout_marginEnd="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sendProposalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Make Offer"
+                    android:textSize="14sp"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="16dp"
+                android:background="?attr/colorOutline" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/proposedPriceInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Proposed price"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/proposedPriceInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:contentDescription="Proposed price input field" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gallery"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/extraImagesRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"
+                android:paddingBottom="16dp" />
+
         </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="More Images"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/extraImagesRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal" />
-
     </LinearLayout>
 </ScrollView>

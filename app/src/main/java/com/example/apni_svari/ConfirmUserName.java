@@ -82,7 +82,6 @@ public class ConfirmUserName extends AppCompatActivity {
                                 userData.put("uid", user.getUid());
                                 if (user.getPhoneNumber() != null) userData.put("phone", user.getPhoneNumber());
                                 
-                                // Use SetOptions.merge() to avoid deleting the phone number if it already exists!
                                 db.collection("users").document(user.getUid())
                                         .set(userData, SetOptions.merge())
                                         .addOnCompleteListener(t2 -> {

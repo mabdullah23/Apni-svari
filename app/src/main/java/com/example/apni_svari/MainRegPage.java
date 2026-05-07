@@ -21,13 +21,11 @@ public class MainRegPage extends AppCompatActivity {
             return insets;
         });
 
-        // Load LoginFragment by default
         if (savedInstanceState == null) {
             loadFragment(new LoginFragment());
         }
     }
 
-    // Helper to load fragments into the container
     public void loadFragment(androidx.fragment.app.Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()

@@ -70,7 +70,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.5.1")
-    
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

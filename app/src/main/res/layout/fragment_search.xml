@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp"
+    android:background="?attr/colorSurface"
     tools:context=".SearchFragment">
 
     <TextView
@@ -13,15 +16,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Search Cars"
-        android:textSize="22sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginBottom="20dp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchCarNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Car Name (required)"
+        android:hint="Car Name"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="12dp">
 
@@ -37,7 +41,7 @@
         android:id="@+id/searchCarModelLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Model (required)"
+        android:hint="Model"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="12dp">
 
@@ -53,7 +57,7 @@
         android:id="@+id/searchCarPriceLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Price (required)"
+        android:hint="Price"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="16dp">
 
@@ -65,11 +69,15 @@
             android:contentDescription="Car price input field" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/searchButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Search"
+        android:textSize="16sp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        app:cornerRadius="12dp"
         android:layout_marginBottom="16dp" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -77,6 +85,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
         tools:listitem="@layout/item_car" />
 
 </LinearLayout>
